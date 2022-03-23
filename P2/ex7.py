@@ -1,40 +1,39 @@
 from client0 import Client
 from Seq1 import Seq
-from colorama import init,  Fore
 
 PRACTICE = 2
-EXERCISE = 4
+EXERCISE = 7
+GENE = "FRAT1"
+FRAGMENTS = 10
+BASES = 10
 
 print(f"-----| Practice {PRACTICE}, Exercise {EXERCISE} |------")
 
-# -- Parameters of the server to talk to
-PORT = 6123
-IP = "127.0.0.1"
+SERVER_IP = "localhost"
+SERVER1_PORT = 8080
+SERVER2_PORT = 8081
 
-# -- Create a client object
-c = Client(IP, PORT)
+c1 = Client(SERVER_IP, SERVER1_PORT)
+print(c1)
+c2 = Client(SERVER_IP, SERVER2_PORT)
+print(c2)
 
-# -- Test the ping method
-c.ping()
+s = Seq()
+s.read_fasta(f"../Genes/{GENE}.txt")
 
-# -- Print the IP and PORTs
-print(f"IP: {c.ip}, {c.port}")
+print(f"Gene {GENE}: {s}")
 
-c = Client(IP, PORT)
-print(c)
+c1.debug_talk(f"Sending {GENE} Gene to the server, in fragments of {BASES} bases")
+c2.debug_talk(f"Sending {GENE} Gene to the server, in fragments of {BASES} bases")
 
-s = "FRAT1.txt"
-s1 = "ADA.txt"
-s2 = "FXN.txt"
-
-sequences = [s, s1, s2]
-for i in sequences:
-    init(autoreset=True)
-    s0 = Seq()
-    s0.read_fasta2(i)
-    print(Fore.BLUE + " Sending " + i + " to the server...")
-    response = c.talk(Fore.LIGHTYELLOW_EX + " Sending " + i + " to the server...")
-    print(f"Response: {response}")
-    print(" Sending " + Fore.BLUE + str(s0) + "to the server...")
-    print(c.talk(s0.strbases))
-    print(f"Response: {response}")
+start_index = 0
+end_index = BASES
+for f in range(1, FRAGMENTS + 1):
+    fragment = s.bases[start_index:end_index]
+    print(f"Fragment {f}: {fragment}")
+    if f % 2 == 0:  # Server 2
+        c2.debug_talk(f"Fragment {f}: {fragment}")
+    else:  # Server 1
+        c1.debug_talk(f"Fragment {f}: {fragment}")
+    start_index += BASES
+    end_index += BASES

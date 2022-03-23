@@ -9,36 +9,52 @@ class Client:
     def ping(self):
         print("OK")
 
-    def talk(self, msg):
-        import socket
+    class Client:
+        def __init__(self, server_ip, server_port):
+            self.server_ip = server_ip
+            self.server_port = server_port
 
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect((self.server_ip, self.server_port))
+        def __str__(self):
+            return f"Connection to server at ({self.server_ip}:{self.server_port})"
 
-        msg_bytes = str.encode(msg)
-        client_socket.send(msg_bytes)
+        def ping(self):
+            print("OK")
 
-        response_bytes = client_socket.recv(2048)
-        response = response_bytes.decode("utf-8")
+        def talk(self, msg):
+            import socket
 
-        client_socket.close()
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket.connect((self.server_ip, self.server_port))
 
-        return response
+            msg_bytes = str.encode(msg)
+            client_socket.send(msg_bytes)
 
-    def debug_talk(self, msg):
-        import socket
-        import termcolor
+            response_bytes = client_socket.recv(2048)
+            response = response_bytes.decode("utf-8")
 
-        client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        client_socket.connect((self.server_ip, self.server_port))
+            client_socket.close()
 
-        print("To Server: ", end="")
-        termcolor.cprint(msg, 'blue')
-        msg_bytes = str.encode(msg)
-        client_socket.send(msg_bytes)
+            return response
 
-        response_bytes = client_socket.recv(2048)
-        response = response_bytes.decode("utf-8")
-        print("From Server: ", end="")
-        termcolor.cprint(response, 'green')
+        def debug_talk(self, msg):
+            import socket
+            import termcolor
+
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client_socket.connect((self.server_ip, self.server_port))
+
+            print("To Server: ", end="")
+            termcolor.cprint(msg, 'blue')
+            msg_bytes = str.encode(msg)
+            client_socket.send(msg_bytes)
+
+            response_bytes = client_socket.recv(2048)
+            response = response_bytes.decode("utf-8")
+            print("From Server:")
+            print()
+            termcolor.cprint(response, 'green')
+
+            client_socket.close()
+
+            return response
 
